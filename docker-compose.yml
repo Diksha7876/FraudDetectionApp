@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql-container-fraudapp
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: n3u3da!
+      MYSQL_DATABASE: frauddb
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    networks:
+      - springboot-network
+
+  springboot-app:
+    build: .
+    container_name: springboot-container-fraudapp
+
+    depends_on:
+      - mysql
+
+    environment:
+      SPRING_PROFILES_ACTIVE: JDBC
+      DB_URL: jdbc:mysql://mysql:3306/frauddb
+      DB_USER: root
+      DB_PASS: n3u3da!
+
+    ports:
+      - "8082:8082"
+
+    networks:
+      - springboot-network
+
+volumes:
+  mysql-data:
+
+networks:
+  springboot-network:
